@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://6lg5ihj8ic2s"]
+
+[ext_resource type="Script" path="res://Code/camera_3d.gd" id="1_316d2"]
+[ext_resource type="Script" path="res://Code/voxel_manager.gd" id="1_lvs1c"]
+
+[sub_resource type="Environment" id="Environment_5s6v0"]
+background_mode = 1
+background_color = Color(0.0117647, 0.109804, 0.160784, 1)
+
+[node name="Main" type="Node3D"]
+
+[node name="VoxelManager" type="Node3D" parent="."]
+script = ExtResource("1_lvs1c")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.928018, 0.372534, 0, -0.372534, 0.928018, 0, 5.45217, 6.57596)
+script = ExtResource("1_316d2")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D"]
+unique_name_in_owner = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_5s6v0")
