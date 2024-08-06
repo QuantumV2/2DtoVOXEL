@@ -10,7 +10,7 @@ func init_voxel_grid(width, height, depth):
 		for y in range(height):
 			var row: Array = []
 			for x in range(width):
-				var tilepresent = [false, [Color(1,1,1), Color(1,1,1), Color(1,1,1)]]
+				var tilepresent = [false, [Color(1,1,1), Color(1,1,1), Color(1,1,1), Color(1,1,1)]]
 				row.append(tilepresent)  # false means the voxel is empty
 				voxels_present += 1 if tilepresent else 0
 			layer.append(row)
@@ -41,17 +41,22 @@ func combine_voxel_meshes(_voxel_grid):
 		for y in range(_voxel_grid[z].size()):
 			for x in range(_voxel_grid[z][y].size()):
 				if _voxel_grid[z][y][x][0]:
-					for face in faces:
-						mesher.set_color(_voxel_grid[z][y][x][1][0])
+					for i in range(faces.size()):
+						var face = faces[i]
+						if i == 10 or i == 11:
+							mesher.set_color(_voxel_grid[z][y][x][1][3])
+						elif i == 8 or i==9:
+							mesher.set_color(_voxel_grid[z][y][x][1][0])
+						else:
+							mesher.set_color(_voxel_grid[z][y][x][1][1])
 						mesher.add_vertex(vertices[face[0]] + Vector3(x, y, z))
 						mesher.add_vertex(vertices[face[1]] + Vector3(x, y, z))
-						#mesher.set_color(_voxel_grid[z][y][x][1][2])
 						mesher.add_vertex(vertices[face[2]] + Vector3(x, y, z))
 	mesher.generate_normals()
 	var combined_mesh = mesher.commit()
 	return combined_mesh
 	
-func update_voxels_from_sprite(img1,img2,img3):
+func update_voxels_from_sprite(img1,img2,img3,img4):
 
 	for x in range(SIZE):
 		for y in range(SIZE):
@@ -59,11 +64,12 @@ func update_voxels_from_sprite(img1,img2,img3):
 				var pixel1 = img1.get_pixel(x, y)
 				var pixel2 = img2.get_pixel(SIZE - z, y)
 				var pixel3 = img3.get_pixel(x, SIZE - z)
+				var pixel4 = img4.get_pixel(x,y)
 
 				if pixel1.a > 0.5 and pixel2.a > 0.5 and pixel3.a > 0.5:
-					voxel_grid[x][SIZE - 1 - y][z] = [true, [pixel1, pixel2, pixel3]]
+					voxel_grid[x][SIZE - 1 - y][z] = [true, [pixel1, pixel2, pixel3, pixel4]]
 				else:
-					voxel_grid[x][SIZE - 1 - y][z] = [false, [Color(1,1,1), Color(1,1,1), Color(1,1,1)]]
+					voxel_grid[x][SIZE - 1 - y][z] = [false, [Color(1,1,1), Color(1,1,1), Color(1,1,1), Color(1,1,1)]]
 	
 func render_voxel_grid(_voxel_grid):
 	var combined_mesh = combine_voxel_meshes(_voxel_grid)
@@ -83,8 +89,9 @@ func _ready() -> void:
 	var sprite1 = Image.load_from_file("res://Sprites/sfront.png")  # front view
 	var sprite2 = Image.load_from_file("res://Sprites/sside.png")  # side view
 	var sprite3 = Image.load_from_file("res://Sprites/top.png")  # top view
+	var sprite4 = Image.load_from_file("res://Sprites/sback.png")  # back view
 
-	update_voxels_from_sprite(sprite1, sprite2, sprite3)
+	update_voxels_from_sprite(sprite1, sprite2, sprite3, sprite4)
 	render_voxel_grid(voxel_grid)
 	pass # Replace with function body.
 
